@@ -29,14 +29,17 @@ import fs from "fs";
 async function populateMovies() {
   console.log(`Starting to populate ${data.length} movies.`);
   const MovieIdChunk = 1000; // Adjust based on rate limits and performance
-  for (let i = 0; i < 36000; i += MovieIdChunk) {
+  for (let i = 0; i < data.length; i += MovieIdChunk) {
     const chunk = data.slice(i, i + MovieIdChunk);
     // const moviePromises = chunk.map( (id) => {
     //   MovieData(id).catch((error) => ({ error, id }));
     // });
     const moviePromises = chunk.map(async (id) => {
       try {
-        return await MovieData(id); // Assuming MovieData is an async function
+        const ExisingId=await findMovieId(id);
+        if(ExisingId) return;
+        const response= await MovieData(id); // Assuming MovieData is an async function
+      return response;
       } catch (error) {
         return { error, id };
       }
@@ -44,14 +47,14 @@ async function populateMovies() {
     const results = await Promise.allSettled(moviePromises);
 
     for (const result of results) {
-      if (result.status === "fulfilled" && result.value.status === 200) {
-        await saveMovie(result.value.data).catch((error) =>
+      if (result?.status === "fulfilled" && result?.value?.status === 200) {
+        await saveMovie(result?.value?.data).catch((error) =>
           console.error(`Failed to save movie: ${error.message}`)
         );
-      } else if (result.status === "rejected" || result.value.error) {
+      } else if (result?.status === "rejected" || result?.value?.error) {
         console.error(
           `Failed to download movie data for ID ${result.value.id}: ${
-            result.reason || result.value.error.message
+            result?.reason || result?.value?.error?.message
           }`
         );
       }
@@ -63,12 +66,24 @@ async function populateMovies() {
 }
 
 async function MovieData(id) {
-  const response = axios.get(`${process.env.prod_api}/${id}`);
-  return response;
+  try {
+    const response = await axios.get(`${process.env.prod_api}/${id}`);
+    return response; // Return axios response object
+  } catch (error) {
+    throw new Error(`Failed to fetch movie data for ID ${id}: ${error.message}`);
+  }
 }
 
-async function findMovie(filter) {
-  await AllMoviesDatabase.findOne(filter);
+async function findMovieId(id) {
+  try {
+    const objectId = String(id); 
+    //finding by id as object as findById expects an object
+    const movie = await AllMoviesDatabase.findOne({ movieid: id }); 
+    return movie; // Return found movie object or null if not found 
+  } catch (error) {
+    console.error(`Error finding movie by id ${id}:`, error);
+    throw error; // Rethrow error to be handled by caller
+  }
 }
 
 async function saveMovie(movie) {
