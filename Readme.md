@@ -1,17 +1,19 @@
 At first install all package by going to root server by typing npm install
 run the server :- npm run watch
 
-API:-
-Unauth:-
+---
+# API:- <br/>
+## Unauth:-
 
-Trending data:- get/ trending data --> /common/trending
-Recent release data:- get/ -->common/all/ott
-Popular review:-get/ -->common/review/popular
-Search movie:- get/ -->common/search/{query}
+ 1._Trending data_:- get/ trending data --> /common/trending <br/>
+2._Recent release data_:- get/ -->common/all/ott <br/>
+3._Popular review_:-get/ -->common/review/popular <br/>
+4._Search movie_:- get/ -->common/search/{query} <br/>
 
+---
 Auth:-
 
-Signup:- post/ -->/signup
-Signup/verify:- post/ -->/signup/verify
-Signin:- post/ -->/signin
-Signin/verify post/ -->/signin/verify
+1._Signup_:- post/ -->/signup
+2._Signup/verify_:- post/ -->/signup/verify
+3._Signin_:- post/ -->/signin
+4._Signin/verify_:- post/ -->/signin/verify
