@@ -1,5 +1,14 @@
 import AllMoviesDatabase from "./Allmovies.mongo.js";
+// import redis from "redis";
 
+//create redis clent to connect redix server
+// let redisClient;
+// (async () => {
+//   redisClient = redis.createClient();
+//   redisClient.on("error", (err) => console.log("Redis Client Error", err));
+
+//   await redisClient.connect();
+// })();
 
 async function findMovie(query) {
   console.log(query);
@@ -9,7 +18,12 @@ async function findMovie(query) {
     return;
   }
 
- 
+  //check if cached query data present in redis
+  // const cachedData = await redisClient.get(`searchMovie:${query}`);
+  // if (cachedData) {
+  //   console.log("Returning cached data from Redis");
+  //   return JSON.parse(cachedData);
+  // }
 
   let data = await AllMoviesDatabase.find({
     $or: [
@@ -26,6 +40,8 @@ async function findMovie(query) {
     ],
   });
 
+  // Store the result in Redis
+  // await redisClient.set(`searchMovie:${query}`, JSON.stringify(data));
 
   return data;
 }
