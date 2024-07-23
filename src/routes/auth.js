@@ -24,6 +24,12 @@ async function getLatestID() {
 authRouter.post("/signup", async (req, res) => {
   try {
     const { username, number } = req.body;
+    //validation of username and mobilenumber
+    if(!username || !number){
+      res.status(401).json({
+        msg:"Please provide all credentials"
+      })
+    }
 
     const extractedNumber = number.slice(-10);
 
