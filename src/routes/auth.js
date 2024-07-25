@@ -73,13 +73,12 @@ authRouter.post("/signup", async (req, res) => {
 //verify
 authRouter.post("/signup/verify", async (req, res) => {
   const { otp } = req.body;
-  console.log(user);
   if (otp === OTP) {
     const token = jwt.sign(
       { id: getLatestID(), username: user.username, number: user.number },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "24h",
       }
     );
     user = await user.save();
@@ -120,13 +119,12 @@ authRouter.post("/signin", async (req, res) => {
 authRouter.post("/signin/verify", async (req, res) => {
   try {
     const { otp } = req.body;
-    // console.log(signinUser);
     if (otp === OTP) {
       const token = jwt.sign(
         { number: signinUser.number },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "24h",
         }
       );
       user = await signinUser.save();
@@ -161,7 +159,7 @@ authRouter.post("/token/refresh", async (req, res) => {
         { id: decoded.id, username: decoded.username, number: decoded.number },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "24h",
         }
       );
       res.status(200).json({ token: newToken });

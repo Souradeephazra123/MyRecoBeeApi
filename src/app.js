@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { commonApiRouter } from "./routes/commonApi.js";
 import { authRouter } from "./routes/auth.js";
+import { AuthRouter } from "./routes/authAPI.js";
 const app = express();
 
 //middleware
@@ -24,5 +25,7 @@ app.use(express.json());
 app.use("/common", commonApiRouter);
 //auth
 app.use("/", authRouter);
+
+app.use("/",AuthRouter)
 
 export { app };
